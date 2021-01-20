@@ -2,6 +2,7 @@ package ro.ubb.lab6.client.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
+import ro.ubb.lab6.core.exception.BikeShopException;
 import ro.ubb.lab6.core.model.BikeType;
 import ro.ubb.lab6.web.dto.BikeDto;
 import ro.ubb.lab6.web.dto.BikesDto;
@@ -9,7 +10,6 @@ import ro.ubb.lab6.web.dto.CustomerDto;
 import ro.ubb.lab6.web.dto.CustomersDto;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -46,8 +46,7 @@ public class Console {
         System.out.println("7. Search bike by name");
         System.out.println("8. Search bike by type");
         System.out.println("9. Show bikes ordered by price");
-        System.out.println("10. Show number of bikes with a specific name");
-        System.out.println("11. Return to the main menu");
+        System.out.println("10. Return to the main menu");
         System.out.println("Option: ");
 
     }
@@ -60,9 +59,8 @@ public class Console {
         System.out.println("4. Delete customer");
         System.out.println("5. Update customer");
         System.out.println("6. Show customers from a specific city");
-        System.out.println("7. Show customers by city paging");
-        System.out.println("8. Show customers by last name sorted in descending order");
-        System.out.println("9. Return to the main menu");
+        System.out.println("7. Show customers by last name sorted in descending order");
+        System.out.println("8. Return to the main menu");
         System.out.println("Option: ");
 
     }
@@ -104,9 +102,6 @@ public class Console {
                     this.handleShowBikesOrderedByPrice();
                     break;
                 case "10":
-                    this.handleShowNumberOfBikes();
-                    break;
-                case "11":
                     return;
 
                 default:
@@ -118,51 +113,48 @@ public class Console {
 
     private void handleShowMostExpensiveBike() {
 
-        //bikeService.showBikeWithMaxPrice().forEach(out::println);
+        BikesDto bikeDtos = restTemplate.getForObject(urlBike + "/top3", BikesDto.class);
+
+        bikeDtos.getBikes().forEach(out::println);
     }
 
     private void handleSearchBikeByType() {
 
-//        try {
-//
-//            out.println("Enter the type: ");
-//            String type = in.nextLine();
-//
-//            boolean anyMatch = Arrays.stream(BikeType.values())
-//                    .anyMatch(bikeType -> bikeType.getBikeType().equalsIgnoreCase(type.toUpperCase()));
-//
-//            if (!anyMatch) {
-//
-//                System.out.println("The category you entered is not valid. Please enter: e.g. citybike, mountainbike, electricbike");
-//                return;
-//            }
-//
-//            BikeType bikeType = BikeType.valueOf(type.toUpperCase());
-//
-//            List<Bike> bikes = this.bikeService.findBikeByType(bikeType);
-//
-//            bikes.forEach(out::println);
-//
-//        } catch (BikeShopException e) {
-//
-//            out.println(e.getMessage());
-//
-//        }
+        try {
+
+            out.println("Enter the type: ");
+            String type = in.nextLine();
+
+            boolean anyMatch = Arrays.stream(BikeType.values())
+                    .anyMatch(bikeType -> bikeType.getBikeType().equalsIgnoreCase(type.toUpperCase()));
+
+            if (!anyMatch) {
+
+                System.out.println("The category you entered is not valid. Please enter: e.g. citybike, mountainbike, electricbike");
+                return;
+            }
+
+            BikeType bikeType = BikeType.valueOf(type.toUpperCase());
+
+            BikesDto bikeDtos = restTemplate.getForObject(urlBike + "/type/{type}", BikesDto.class, bikeType);
+
+            bikeDtos.getBikes().forEach(out::println);
+
+        } catch (BikeShopException e) {
+
+            out.println(e.getMessage());
+
+        }
     }
 
     private void handleShowBikesOrderedByPrice() {
 
-//        List<Bike> bikesOrdered = bikeService.showBikesOrderedByPrice();
-//        bikesOrdered.forEach(out::println);
+        BikesDto bikeDtos = restTemplate.getForObject(urlBike + "/descbyprice", BikesDto.class);
+
+        bikeDtos.getBikes().forEach(out::println);
+
     }
 
-    private void handleShowNumberOfBikes() {
-
-//        out.println("Enter bike name: ");
-//        String name = in.nextLine();
-//
-//        out.println("Number of bikes with name " + name + " = " + bikeService.countByName(name));
-    }
 
     private void handleUpdateBike() {
 
@@ -197,20 +189,20 @@ public class Console {
 
     private void handleSearchBikeByName() {
 
-//        try {
-//
-//            out.println("Enter the name: ");
-//            String name = in.nextLine();
-//
-//            List<Bike> bikes = this.bikeService.findBikeByName(name);
-//
-//            bikes.forEach(out::println);
-//
-//        } catch (BikeShopException e) {
-//
-//            out.println(e.getMessage());
-//
-//        }
+        try {
+
+            out.println("Enter the name: ");
+            String name = in.nextLine();
+
+            BikesDto bikes = restTemplate.getForObject(urlBike + "/name/{name}", BikesDto.class, name);
+
+            bikes.getBikes().forEach(out::println);
+
+        } catch (BikeShopException e) {
+
+            out.println(e.getMessage());
+
+        }
     }
 
     private void handleDeleteBikeByID() {
@@ -323,12 +315,9 @@ public class Console {
                     handleSearchCustomersFromSpecificCity();
                     break;
                 case "7":
-                    handleShowCustomersByCityPaging();
-                    break;
-                case "8":
                     handleShowCustomersOrderedByLastNameDesc();
                     break;
-                case "9": {
+                case "8": {
                     return;
                 }
                 default:
@@ -340,59 +329,33 @@ public class Console {
 
     private void handleShowCustomersOrderedByLastNameDesc() {
 
-//        try {
-//
-//            customerService.sortByLastNameDesc()
-//                    .forEach(out::println);
-//
-//        } catch (BikeShopException bex) {
-//
-//            out.println(bex.getMessage());
-//        }
-    }
+        try {
 
-    private void handleShowCustomersByCityPaging() {
+            CustomersDto customerDtos = restTemplate.getForObject(urlCustomer + "/sortbylastnamedesc", CustomersDto.class);
 
-//        out.println("Enter city: ");
-//        String city = in.nextLine();
-//
-//        while (true) {
-//
-//            out.println("Enter page number: -1 to quit ");
-//            int pageNumber = in.nextInt();
-//            in.nextLine();
-//
-//            if (pageNumber == -1) {
-//
-//                break;
-//            }
-//
-//            List<Customer> allByallByCity = customerService.findAllByCity(pageNumber, city);
-//            allByallByCity.forEach(out::println);
-//
-//            if (pageNumber == allByallByCity.size()) {
-//
-//                out.println("This was the last entry.");
-//                break;
-//            }
-//        }
+            customerDtos.getCustomers().forEach(out::println);
+
+        } catch (BikeShopException bex) {
+
+            out.println(bex.getMessage());
+        }
     }
 
     private void handleSearchCustomersFromSpecificCity() {
 
-//        try {
-//
-//            System.out.println("Please enter city: ");
-//            String city = in.nextLine();
-//
-//            List<Customer> customers = this.customerService.searchCustomersFromASpecificCity(city);
-//
-//            customers.forEach(System.out::println);
-//
-//        } catch (BikeShopException bex) {
-//
-//            out.println(bex.getMessage());
-//        }
+        try {
+
+            System.out.println("Please enter city: ");
+            String city = in.nextLine();
+
+            CustomersDto customersDto = restTemplate.getForObject(urlCustomer + "/ascbylastname/{city}", CustomersDto.class, city);
+
+            customersDto.getCustomers().forEach(out::println);
+
+        } catch (BikeShopException bex) {
+
+            out.println(bex.getMessage());
+        }
     }
 
     private void handleUpdateCustomer() {
@@ -556,15 +519,4 @@ public class Console {
             }
         }
     }
-
-//    public void runConsole() {
-//
-//        String url = "http://localhost:8080/api/bikes";
-//
-//
-//        System.out.println("getting bikes...");
-//        BikesDto bikes = restTemplate.getForObject(url, BikesDto.class);
-//
-//        bikes.getBikes().forEach(System.out::println);
-//    }
 }

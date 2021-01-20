@@ -146,18 +146,4 @@ public class BikeServiceImpl implements BikeService {
         return bikes;
 
     }
-
-    @Override
-    public long countByName(String name) {
-
-        log.trace("countByName -- method entered");
-
-        long count = bikeRepository.countByName(name);
-
-        log.trace("countByName: result = {}", count);
-
-        return count;
-    }
-
-
 }

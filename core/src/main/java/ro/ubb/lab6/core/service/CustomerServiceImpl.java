@@ -114,21 +114,6 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> findAllByCity(int pageNumber, String city) {
-
-        log.trace("findAllByCity -- method entered");
-
-        Pageable pageable = PageRequest.of(pageNumber, 2);
-
-        List<Customer> customers = customerRepository.findAllByCity(city, pageable);
-        validator.validateList(customers);
-
-        log.trace("findAllByCity: result = {}", customers);
-
-        return customers;
-    }
-
-    @Override
     public List<Customer> sortByLastNameDesc() {
 
         log.trace("sortedByLastNameDesc -- method entered");

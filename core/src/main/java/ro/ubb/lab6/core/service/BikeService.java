@@ -26,5 +26,4 @@ public interface BikeService {
 
     List<Bike> showBikesOrderedByPrice();
 
-    long countByName(String name);
 }

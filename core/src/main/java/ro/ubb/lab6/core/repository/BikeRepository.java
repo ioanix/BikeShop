@@ -12,8 +12,6 @@ public interface BikeRepository extends BikeShopRepository<Bike, Long> {
 
     List<Bike> findBikeByType(BikeType bikeType);
 
-    long countByName(String name);
-
     List<Bike> findAllByOrderByPriceDesc();
 
     List<Bike> findTop3ByOrderByPriceDesc();

@@ -18,7 +18,5 @@ public interface CustomerService {
 
     List<Customer> searchCustomersFromASpecificCity(String city);
 
-    List<Customer> findAllByCity(int pageNumber, String city);
-
     List<Customer> sortByLastNameDesc();
 }

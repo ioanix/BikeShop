@@ -12,7 +12,6 @@ import ro.ubb.lab6.web.dto.CustomerDto;
 import ro.ubb.lab6.web.dto.CustomersDto;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class CustomerController {
@@ -29,7 +28,7 @@ public class CustomerController {
 
         List<Customer> customers = customerService.findAllCustomers();
 
-        Set<CustomerDto> customerDtos = customerConverter.convertModelsToDtos(customers);
+        List<CustomerDto> customerDtos = customerConverter.convertModelsToDtos(customers);
 
         CustomersDto customersDto = new CustomersDto(customerDtos);
 
@@ -85,5 +84,30 @@ public class CustomerController {
         customerService.deleteCustomerService(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/customers/sortbylastnamedesc")
+    CustomersDto getAllCustomersOrderByLastNameDesc() {
+
+        List<Customer> customers = customerService.sortByLastNameDesc();
+
+        List<CustomerDto> customerDtos = customerConverter.convertModelsToDtos(customers);
+
+        CustomersDto customersDto = new CustomersDto(customerDtos);
+
+        return customersDto;
+    }
+
+    @RequestMapping(value = "/customers/ascbylastname/{city}")
+    CustomersDto findAllByCityOrderByLastNameAsc(@PathVariable String city) {
+
+        List<Customer> customers = customerService.searchCustomersFromASpecificCity(city);
+
+        List<CustomerDto> customerDtos = customerConverter.convertModelsToDtos(customers);
+
+        CustomersDto customersDto = new CustomersDto(customerDtos);
+
+        return customersDto;
+
     }
 }

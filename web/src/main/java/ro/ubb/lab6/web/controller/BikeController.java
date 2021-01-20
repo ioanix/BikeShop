@@ -1,18 +1,21 @@
 package ro.ubb.lab6.web.controller;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.ubb.lab6.core.model.Bike;
+import ro.ubb.lab6.core.model.BikeType;
 import ro.ubb.lab6.core.service.BikeService;
+import ro.ubb.lab6.core.service.BikeServiceImpl;
 import ro.ubb.lab6.web.converter.BikeConverter;
 import ro.ubb.lab6.web.dto.BikeDto;
 import ro.ubb.lab6.web.dto.BikesDto;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class BikeController {
@@ -23,16 +26,21 @@ public class BikeController {
     @Autowired
     private BikeConverter bikeConverter;
 
+    private static final Logger log = LoggerFactory.getLogger(BikeServiceImpl.class);
 
-    @RequestMapping(value="/bikes")
+
+    @RequestMapping(value = "/bikes")
     BikesDto getAllBikes() {
 
-        //TODO: logs
+        log.trace("getAllBikes --- method entered");
+
         List<Bike> bikes = bikeService.findAllBikes();
 
-        Set<BikeDto> bikeDtos= bikeConverter.convertModelsToDtos(bikes);
+        List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
 
         BikesDto bikesDto = new BikesDto(bikeDtos);
+
+        log.trace("getAllBikes: result = {}", bikesDto.getBikes());
 
         return bikesDto;
     }
@@ -49,7 +57,7 @@ public class BikeController {
         return bikeDto;
     }
 
-    @RequestMapping(value="/bikes/{id}")
+    @RequestMapping(value = "/bikes/{id}")
     BikeDto findBikeById(@PathVariable Long id) {
 
         Bike bike = bikeService.findOneBike(id);
@@ -76,4 +84,55 @@ public class BikeController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/bikes/name/{name}")
+    BikesDto findBikeByName(@PathVariable String name) {
+
+        List<Bike> bikesByName = bikeService.findBikeByName(name);
+
+        List<BikeDto> bikesByNameDtos = bikeConverter.convertModelsToDtos(bikesByName);
+
+        BikesDto bikesDto = new BikesDto(bikesByNameDtos);
+
+        return bikesDto;
+    }
+
+    @RequestMapping(value = "/bikes/type/{type}")
+    BikesDto findBikeByType(@PathVariable String type) {
+
+        List<Bike> bikesByType = bikeService.findBikeByType(BikeType.valueOf(type.toUpperCase()));
+
+        List<BikeDto> bikesByTypeDtos = bikeConverter.convertModelsToDtos(bikesByType);
+
+        BikesDto bikesDto = new BikesDto(bikesByTypeDtos);
+
+        return bikesDto;
+    }
+
+    @RequestMapping(value = "/bikes/descbyprice")
+    BikesDto getAllBikesOrderedByPriceDesc() {
+
+        //TODO: logs
+        List<Bike> bikes = bikeService.showBikesOrderedByPrice();
+
+        List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
+
+        BikesDto bikesDto = new BikesDto(bikeDtos);
+
+        return bikesDto;
+    }
+
+    @RequestMapping(value = "/bikes/top3")
+    BikesDto getTop3OrderedByPrice() {
+
+        //TODO: logs
+        List<Bike> bikes = bikeService.showBikeWithMaxPrice();
+
+        List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
+
+        BikesDto bikesDto = new BikesDto(bikeDtos);
+
+        return bikesDto;
+    }
 }
+
