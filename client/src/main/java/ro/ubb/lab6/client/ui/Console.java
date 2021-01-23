@@ -42,7 +42,7 @@ public class Console {
         System.out.println("3. Search bike by id");
         System.out.println("4. Delete bike");
         System.out.println("5. Update bike");
-        System.out.println("6. Show the most expensive bike");
+        System.out.println("6. Show top 3 most expensive bikes");
         System.out.println("7. Search bike by name");
         System.out.println("8. Search bike by type");
         System.out.println("9. Show bikes ordered by price");
@@ -214,6 +214,7 @@ public class Console {
             in.nextLine();
 
             restTemplate.delete(urlBike + "/{id}", id);
+            //out.println(restTemplate.getForEntity(urlBike + "/{id}", Bike.class, id));
             out.println("Bike with id " + id + " was deleted");
 
         } catch (Exception e) {

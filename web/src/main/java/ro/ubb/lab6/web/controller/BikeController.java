@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ro.ubb.lab6.core.model.Bike;
 import ro.ubb.lab6.core.model.BikeType;
 import ro.ubb.lab6.core.service.BikeService;
-import ro.ubb.lab6.core.service.BikeServiceImpl;
 import ro.ubb.lab6.web.converter.BikeConverter;
 import ro.ubb.lab6.web.dto.BikeDto;
 import ro.ubb.lab6.web.dto.BikesDto;
@@ -26,7 +25,7 @@ public class BikeController {
     @Autowired
     private BikeConverter bikeConverter;
 
-    private static final Logger log = LoggerFactory.getLogger(BikeServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(BikeController.class);
 
 
     @RequestMapping(value = "/bikes")
@@ -45,10 +44,8 @@ public class BikeController {
         return bikesDto;
     }
 
-    @RequestMapping(value = "/bikes", method = RequestMethod.POST)
+    @PostMapping(value = "/bikes")
     BikeDto saveBike(@RequestBody BikeDto dto) {
-
-        //todo: logs
 
         Bike bike = bikeService.addBikeService(dto.getName(), dto.getType(), dto.getPrice());
 
@@ -67,7 +64,7 @@ public class BikeController {
         return bikeDto;
     }
 
-    @RequestMapping(value = "/bikes/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/bikes/{id}")
     BikeDto updateBike(@PathVariable Long id, @RequestBody BikeDto dto) {
 
         Bike bike = bikeService.updateBikeService(id, dto.getName(), dto.getType(), dto.getPrice());
@@ -77,7 +74,7 @@ public class BikeController {
         return bikeDto;
     }
 
-    @RequestMapping(value = "/bikes/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/bikes/{id}")
     ResponseEntity<?> deleteBike(@PathVariable Long id) {
 
         bikeService.deleteBikeService(id);
@@ -112,7 +109,6 @@ public class BikeController {
     @RequestMapping(value = "/bikes/descbyprice")
     BikesDto getAllBikesOrderedByPriceDesc() {
 
-        //TODO: logs
         List<Bike> bikes = bikeService.showBikesOrderedByPrice();
 
         List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
@@ -125,7 +121,6 @@ public class BikeController {
     @RequestMapping(value = "/bikes/top3")
     BikesDto getTop3OrderedByPrice() {
 
-        //TODO: logs
         List<Bike> bikes = bikeService.showBikeWithMaxPrice();
 
         List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);

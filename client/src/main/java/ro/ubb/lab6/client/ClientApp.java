@@ -10,7 +10,16 @@ public class ClientApp {
                 new AnnotationConfigApplicationContext("ro.ubb.lab6.client.config");
 
         Console console = context.getBean(Console.class);
-        console.runConsole();
+
+        try {
+
+            console.runConsole();
+
+        } catch(Throwable t) {
+
+            t.printStackTrace();
+            System.out.println(t.getMessage());
+        }
 
         System.out.println("bye ");
     }

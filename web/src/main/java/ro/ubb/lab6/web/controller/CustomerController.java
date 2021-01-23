@@ -35,10 +35,8 @@ public class CustomerController {
         return customersDto;
     }
 
-    @RequestMapping(value = "/customers", method = RequestMethod.POST)
+    @PostMapping(value = "/customers")
     CustomerDto saveCustomer(@RequestBody CustomerDto dto) {
-
-        //todo: logs
 
         Customer customer = customerService.addCustomerService(dto.getFirstName(),
                 dto.getLastName(),
@@ -62,7 +60,7 @@ public class CustomerController {
         return customerDto;
     }
 
-    @RequestMapping(value = "/customers/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/customers/{id}")
     CustomerDto updateCustomer(@PathVariable Long id, @RequestBody CustomerDto dto) {
 
         Customer customer = customerService.updateCustomerService(id,
@@ -78,7 +76,7 @@ public class CustomerController {
         return customerDto;
     }
 
-    @RequestMapping(value = "/customers/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/customers/{id}")
     ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
 
         customerService.deleteCustomerService(id);
