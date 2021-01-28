@@ -6,11 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ro.ubb.lab6.core.model.Bike;
 import ro.ubb.lab6.core.model.Customer;
+import ro.ubb.lab6.core.model.Sale;
+import ro.ubb.lab6.core.repository.BikeRepository;
 import ro.ubb.lab6.core.repository.CustomerRepository;
 import ro.ubb.lab6.core.validators.Validator;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -21,8 +27,15 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
 
     @Autowired
+    private BikeRepository bikeRepository;
+
+    @Autowired
     @Qualifier("customerValidator")
     private Validator<Customer> validator;
+
+    @Autowired
+    @Qualifier("bikeValidator")
+    private Validator<Bike> bikeValidator;
 
 
     @Override
@@ -123,4 +136,93 @@ public class CustomerServiceImpl implements CustomerService {
 
         return customersSorted;
     }
+
+    @Transactional
+    @Override
+    public boolean buyBike(Long c_id, Long b_id, Date saleDate) {
+
+        log.trace("buyBike -- method entered");
+
+        Customer customer = customerRepository.findById(c_id).orElseThrow();
+        log.trace("customer = {}", customer);
+
+        Bike bike = bikeRepository.findById(b_id).orElseThrow();
+        log.trace("bike = {}", bike);
+
+        customer.addDate(bike, saleDate);
+        log.trace("sales = {}", customer.getSales());
+
+        return true;
+
+    }
+
+    @Override
+    public Set<Bike> getAllBikesForCustomer(Long id) {
+
+        log.trace("getAllBikesForCustomer -- method entered");
+
+        Customer customer = customerRepository.findById(id).orElseThrow();
+
+        Set<Bike> bikesForCustomer = customer.getBikesList();
+
+        log.trace("bikesForCustomer = {}", bikesForCustomer);
+
+        bikeValidator.validateList(bikesForCustomer);
+
+        return bikesForCustomer;
+    }
+
+    @Override
+    public List<Sale> getAllSales() {
+
+        log.trace("getAllSales -- method entered");
+
+        List<Sale> allSales = new ArrayList<>();
+
+        for (Customer customer : customerRepository.findAll()) {
+
+            log.trace("customer id = {}", customer.getId());
+
+            List<Sale> salesForCustomer = customer.getSales();
+            allSales.addAll(salesForCustomer);
+        }
+
+        log.trace("allSales = {}", allSales);
+        return allSales;
+    }
+
+    //    @Transactional
+//    @Override
+//    public boolean deleteBikeForCustomer(Long c_id, Long b_id) {
+//
+//        log.trace("deleteBikeForCustomer -- method entered");
+//
+//        Customer customer = customerRepository.findById(c_id).orElseThrow();
+//
+//        Bike bike = bikeRepository.findById(b_id).orElseThrow();
+//
+//        Set<Bike> bikesList = customer.getBikesList();
+//
+//        log.trace("bikeList = {}", bikesList);
+//        customer.removeBike(bike);
+//        log.trace("bikeList = {}", bikesList);
+//
+//        log.trace("sales = {}", customer.getSales());
+//
+//        return true;
+//    }
+
+    //    @Override
+//    @Transactional
+//    public Optional<Customer> updateCustomerBikes(Long customerId, Map<Long, Integer> bikes) {
+//
+//        log.trace("updateCustomerBikes: customerId={}, bikes={}", customerId, bikes);
+//
+//        Optional<Customer> customer = customerRepository.findById(customerId);
+//
+//        Collection<Integer> bikeIds = bikes.values();
+//
+//
+//        return customer;
+//    }
 }

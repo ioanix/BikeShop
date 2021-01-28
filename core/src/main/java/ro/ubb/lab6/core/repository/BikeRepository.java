@@ -15,4 +15,7 @@ public interface BikeRepository extends BikeShopRepository<Bike, Long> {
     List<Bike> findAllByOrderByPriceDesc();
 
     List<Bike> findTop3ByOrderByPriceDesc();
+
+//    @Query(value = "select b from bike b inner join sales s on b.id = s.bike_id where s.customer_id = ?1", nativeQuery = true)
+//    Set<Bike> findByCustomerId(Long id);
 }

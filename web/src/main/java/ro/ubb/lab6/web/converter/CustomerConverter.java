@@ -6,7 +6,7 @@ import ro.ubb.lab6.core.model.Customer;
 import ro.ubb.lab6.web.dto.CustomerDto;
 
 @Component
-public class CustomerConverter extends BaseConverter<Customer, CustomerDto> {
+public class CustomerConverter extends AbstractConverterBaseEntityConverter<Customer, CustomerDto> {
 
     @Override
     public Customer convertDtoToModel(CustomerDto dto) {

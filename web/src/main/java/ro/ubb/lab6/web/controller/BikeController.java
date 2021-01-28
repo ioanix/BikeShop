@@ -35,6 +35,8 @@ public class BikeController {
 
         List<Bike> bikes = bikeService.findAllBikes();
 
+        //Collection<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
+
         List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
 
         BikesDto bikesDto = new BikesDto(bikeDtos);
@@ -87,9 +89,11 @@ public class BikeController {
 
         List<Bike> bikesByName = bikeService.findBikeByName(name);
 
-        List<BikeDto> bikesByNameDtos = bikeConverter.convertModelsToDtos(bikesByName);
+        //Collection<BikeDto> bikesByNameDtos = bikeConverter.convertModelsToDtos(bikesByName);
 
-        BikesDto bikesDto = new BikesDto(bikesByNameDtos);
+        List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikesByName);
+
+        BikesDto bikesDto = new BikesDto(bikeDtos);
 
         return bikesDto;
     }
@@ -99,9 +103,11 @@ public class BikeController {
 
         List<Bike> bikesByType = bikeService.findBikeByType(BikeType.valueOf(type.toUpperCase()));
 
-        List<BikeDto> bikesByTypeDtos = bikeConverter.convertModelsToDtos(bikesByType);
+        //Collection<BikeDto> bikesByTypeDtos = bikeConverter.convertModelsToDtos(bikesByType);
 
-        BikesDto bikesDto = new BikesDto(bikesByTypeDtos);
+        List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikesByType);
+
+        BikesDto bikesDto = new BikesDto(bikeDtos);
 
         return bikesDto;
     }
@@ -110,6 +116,8 @@ public class BikeController {
     BikesDto getAllBikesOrderedByPriceDesc() {
 
         List<Bike> bikes = bikeService.showBikesOrderedByPrice();
+
+       //Collection<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
 
         List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
 
@@ -123,6 +131,7 @@ public class BikeController {
 
         List<Bike> bikes = bikeService.showBikeWithMaxPrice();
 
+        //Collection<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
         List<BikeDto> bikeDtos = bikeConverter.convertModelsToDtos(bikes);
 
         BikesDto bikesDto = new BikesDto(bikeDtos);

@@ -6,7 +6,8 @@ import ro.ubb.lab6.core.model.BikeType;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class BikeDto extends BaseDto {

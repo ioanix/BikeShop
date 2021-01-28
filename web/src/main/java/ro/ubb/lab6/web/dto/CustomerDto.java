@@ -5,7 +5,8 @@ import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class CustomerDto extends BaseDto {
@@ -16,4 +17,5 @@ public class CustomerDto extends BaseDto {
     private String city;
     private String street;
     private String number;
+    //private Set<Long> bikes;
 }

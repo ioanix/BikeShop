@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 import ro.ubb.lab6.core.exception.BikeShopException;
 import ro.ubb.lab6.core.model.BikeType;
-import ro.ubb.lab6.web.dto.BikeDto;
-import ro.ubb.lab6.web.dto.BikesDto;
-import ro.ubb.lab6.web.dto.CustomerDto;
-import ro.ubb.lab6.web.dto.CustomersDto;
+import ro.ubb.lab6.web.dto.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -60,7 +60,11 @@ public class Console {
         System.out.println("5. Update customer");
         System.out.println("6. Show customers from a specific city");
         System.out.println("7. Show customers by last name sorted in descending order");
-        System.out.println("8. Return to the main menu");
+        System.out.println("8. Buy bike");
+        System.out.println("9. Show bikes list for customer");
+        //System.out.println("10. Delete bike for customer");
+        System.out.println("10. Show all sales");
+        System.out.println("11. Return to the main menu");
         System.out.println("Option: ");
 
     }
@@ -214,7 +218,6 @@ public class Console {
             in.nextLine();
 
             restTemplate.delete(urlBike + "/{id}", id);
-            //out.println(restTemplate.getForEntity(urlBike + "/{id}", Bike.class, id));
             out.println("Bike with id " + id + " was deleted");
 
         } catch (Exception e) {
@@ -318,7 +321,19 @@ public class Console {
                 case "7":
                     handleShowCustomersOrderedByLastNameDesc();
                     break;
-                case "8": {
+                case "8":
+                    buyBike();
+                    break;
+                case "9":
+                    showListOfBikesForCustomer();
+                    break;
+//                case "10":
+//                    deleteBikeForCustomer();
+//                    break;
+                case "10":
+                    handleShowAllSales();
+                    break;
+                case "11": {
                     return;
                 }
                 default:
@@ -326,6 +341,68 @@ public class Console {
                     break;
             }
         }
+    }
+
+    private void handleShowAllSales() {
+
+        SalesDto salesDto = restTemplate.getForObject(urlCustomer + "/sales", SalesDto.class);
+
+        salesDto.getSales().forEach(out::println);
+
+    }
+
+//    private void deleteBikeForCustomer() {
+//
+//        out.println("Enter the customer id: ");
+//        Long c_id = in.nextLong();
+//        in.nextLine();
+//
+//        out.println("Enter the bike id you want to delete: ");
+//        Long b_id = in.nextLong();
+//        in.nextLine();
+//
+//        restTemplate.put(urlCustomer +"/shopping-list/delete/{b_id}", c_id, b_id);
+//    }
+
+    private void showListOfBikesForCustomer() {
+
+        try {
+            out.println("Enter customer id: ");
+            Long id = in.nextLong();
+            in.nextLine();
+
+            BikesDto bikesDto = restTemplate.getForObject(urlCustomer + "/shopping-list/{id}", BikesDto.class, id);
+            bikesDto.getBikes()
+                    .forEach(out::println);
+
+        } catch(BikeShopException bex) {
+
+            out.println(bex.getMessage());
+        }
+    }
+
+    private void buyBike() {
+
+        out.println("Enter bike id: ");
+        Long b_id = in.nextLong();
+        in.nextLine();
+
+        out.println("Enter customer id: ");
+        Long c_id = in.nextLong();
+        in.nextLine();
+
+        out.println("Date of the sale: ");
+
+        Date saleDate = null;
+        try {
+            saleDate = new SimpleDateFormat("dd/MM/yyyy").parse(in.nextLine());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SaleDto saleDto = new SaleDto(c_id, b_id, saleDate);
+
+        restTemplate.postForObject(urlCustomer + "/buy", saleDto, SaleDto.class);
     }
 
     private void handleShowCustomersOrderedByLastNameDesc() {

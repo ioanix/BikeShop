@@ -6,7 +6,7 @@ import ro.ubb.lab6.web.dto.BikeDto;
 
 
 @Component
-public class BikeConverter extends BaseConverter<Bike, BikeDto> {
+public class BikeConverter extends AbstractConverterBaseEntityConverter<Bike, BikeDto> {
 
     @Override
     public Bike convertDtoToModel(BikeDto dto) {
